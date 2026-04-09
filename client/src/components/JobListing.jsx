@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { AppContext } from "../context/AppContext";
 import { assets, JobCategories, JobLocations } from "../assets/assets";
 import JobCard from "./JobCard";
@@ -6,6 +6,17 @@ import JobCard from "./JobCard";
 const JobListing = () => {
   const { isSearched, searchFilter, setSearchFilter, jobs } =
     useContext(AppContext);
+  const [showFilter, setShowFilter] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const jobListRef = useRef(null);
+
+  const scrollToJobList = () => {
+    jobListRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [jobs]);
   return (
     <div className="container 2xl:px-20 mx-auto flex flex-col lg:flex-row max-lg:space-y-8 py-8">
       {/* Sidebar */}
@@ -45,9 +56,14 @@ const JobListing = () => {
               </div>
             </div>
           )}
-
+        <button
+          onClick={() => setShowFilter((prev) => !prev)}
+          className="px-6 py-1.5 rounded border border-gray-400 lg:hidden"
+        >
+          {showFilter ? "Close" : "Filters"}
+        </button>
         {/* Category Section */}
-        <div className="max-lg:hidden">
+        <div className={showFilter ? "" : "max-lg:hidden"}>
           <h4 className="font-medium text-lg py-4">Search by Categories</h4>
           <ul className="space-y-4 text-gray-600">
             {JobCategories.map((category, index) => (
@@ -59,7 +75,7 @@ const JobListing = () => {
           </ul>
         </div>
         {/* Location Section */}
-        <div className="max-lg:hidden">
+        <div className={showFilter ? "" : "max-lg:hidden"}>
           <h4 className="font-medium text-lg py-4 pt-15">Search by Location</h4>
           <ul className="space-y-4 text-gray-600">
             {JobLocations.map((location, index) => (
@@ -74,15 +90,70 @@ const JobListing = () => {
 
       {/* Job Listing Section */}
       <section className="w-full lg:w-3/4 text-gray-800 max-lg:px-4">
-        <h3 className="font-medium text-3xl py-2" id="job-list">
+        <h3 className="font-medium text-3xl py-2" ref={jobListRef}>
           Latest jobs
         </h3>
         <p className="mb-8">Get your desired job from top companies</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-          {jobs.map((job, index) => (
-            <JobCard key={index} job={job} />
-          ))}
+          {jobs
+            .slice((currentPage - 1) * 6, currentPage * 6)
+            .map((job, index) => (
+              <JobCard key={index} job={job} />
+            ))}
         </div>
+
+        {/* Pagination */}
+        {jobs.length > 6 && (
+          <div className="flex items-center justify-center space-x-2 mt-10">
+            <button
+              onClick={() => {
+                if (currentPage > 1) {
+                  setCurrentPage(currentPage - 1);
+                  scrollToJobList();
+                }
+              }}
+              disabled={currentPage === 1}
+              className={
+                currentPage === 1
+                  ? "opacity-50 cursor-not-allowed"
+                  : "cursor-pointer"
+              }
+            >
+              <img src={assets.left_arrow_icon} alt="Previous Page" />
+            </button>
+            {Array.from({ length: Math.ceil(jobs.length / 6) }).map(
+              (_, index) => (
+                <button
+                  className={`w-10 h-10 flex items-center justify-center border border-gray-300 rounded ${currentPage === index + 1 ? "bg-blue-100 text-blue-500" : "text-gray-500"}`}
+                  onClick={() => {
+                    setCurrentPage(index + 1);
+                    scrollToJobList();
+                  }}
+                  key={index}
+                >
+                  {index + 1}
+                </button>
+              ),
+            )}
+            <button
+              onClick={() => {
+                const totalPages = Math.ceil(jobs.length / 6);
+                if (currentPage < totalPages) {
+                  setCurrentPage(currentPage + 1);
+                  scrollToJobList();
+                }
+              }}
+              disabled={currentPage === Math.ceil(jobs.length / 6)}
+              className={
+                currentPage === Math.ceil(jobs.length / 6)
+                  ? "opacity-50 cursor-not-allowed"
+                  : "cursor-pointer"
+              }
+            >
+              <img src={assets.right_arrow_icon} alt="Next Page" />
+            </button>
+          </div>
+        )}
       </section>
     </div>
   );
