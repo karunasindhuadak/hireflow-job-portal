@@ -7,9 +7,9 @@ const Navbar = () => {
   const { openSignIn } = useClerk();
   const { isLoaded, isSignedIn, user } = useUser();
   return (
-    <div className="shadow py-4">
+    <div className="shadow py-3">
       <div className="container px-4 2xl:px-20 mx-auto flex justify-between items-center">
-        <img src={assets.logo} alt="" />
+        <img className="h-14" src={assets.logo} alt="" />
         {isLoaded ? (
           isSignedIn ? (
             <div className="flex items-center gap-3">
