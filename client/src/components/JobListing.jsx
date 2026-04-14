@@ -149,7 +149,11 @@ const JobListing = () => {
         <h3 className="font-medium text-3xl py-2" ref={jobListRef}>
           Latest jobs
         </h3>
-        <p className="mb-8">Get your desired job from top companies</p>
+        <p className="mb-8">
+          {filteredJobs.length !== 0
+            ? "Get your desired job from top companies"
+            : "No jobs found"}
+        </p>
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
           {filteredJobs
             .slice((currentPage - 1) * 6, currentPage * 6)
@@ -159,7 +163,7 @@ const JobListing = () => {
         </div>
 
         {/* Pagination */}
-        {jobs.length > 6 && (
+        {filteredJobs.length > 6 && (
           <div className="flex items-center justify-center space-x-2 mt-10">
             <button
               onClick={() => {
