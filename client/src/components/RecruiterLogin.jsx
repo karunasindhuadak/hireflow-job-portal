@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { assets } from "../assets/assets";
+import { AppContext } from "../context/AppContext";
 
 const RecruiterLogin = () => {
   const [state, setState] = useState("Login");
@@ -7,80 +8,150 @@ const RecruiterLogin = () => {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
 
-  const [image, setImage] = useState(false);
+  const [image, setImage] = useState(null);
   const [isTextDataSubmited, setIsTextDataSubmited] = useState(false);
+  const { setShowRecruiterLogin } = useContext(AppContext);
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    if (state === "Sign Up" && !isTextDataSubmited) {
+      setIsTextDataSubmited(true);
+    }
+  };
+
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "unset";
+    };
+  }, []);
   return (
-    <div className="absolute top-0 left-0 right-0 bottom-0 z-10 backdrop-blur-sm bg-black/30 flex justify-center items-center">
-      <form className="relative bg-white p-10 rounded-xl text-slate-500">
+    <div
+      className="absolute top-0 left-0 right-0 bottom-0 z-10 backdrop-blur-sm bg-black/30 flex justify-center items-center"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) setShowRecruiterLogin(false);
+      }}
+    >
+      <form
+        onSubmit={handleFormSubmit}
+        aria-label={`Recruiter ${state} form`}
+        className="relative bg-white p-10 rounded-xl text-slate-500 max-w-md w-full mx-4 animate-fade-in"
+      >
         <h1 className="text-center text-2xl text-neutral-700 font-medium">
           Recruiter {state}
         </h1>
-        <p className="text-sm">
+        <p className="text-sm text-center">
           Welcome back! Please{" "}
-          <span>{state === "Login" ? "sign in" : "sign up"}</span> to continue
+          <span>{state === "Login" ? "login" : "sign up"}</span> to continue
         </p>
-        <>
-          {state !== "Login" && (
+        {state === "Sign Up" && isTextDataSubmited ? (
+          <>
+            <div className="flex items-center gap-4 my-10">
+              <label htmlFor="image">
+                <img
+                  className="w-16 rounded-full"
+                  src={image ? URL.createObjectURL(image) : assets.upload_area}
+                  alt=""
+                />
+                <input
+                  onChange={(e) => setImage(e.target.files[0])}
+                  type="file"
+                  name=""
+                  id="image"
+                  hidden
+                />
+              </label>
+              <p>
+                Upload Company <br /> logo
+              </p>
+            </div>
+          </>
+        ) : (
+          <>
+            {state !== "Login" && (
+              <div className="border px-4 py-2 flex items-center gap-2 rounded-full mt-5">
+                <img src={assets.person_icon} alt="" />
+                <input
+                  onChange={(e) => setName(e.target.value)}
+                  className="outline-none text-sm w-full"
+                  value={name}
+                  type="text"
+                  placeholder="Company Name"
+                  required
+                />
+              </div>
+            )}
             <div className="border px-4 py-2 flex items-center gap-2 rounded-full mt-5">
-              <img src={assets.person_icon} alt="" />
+              <img src={assets.email_icon} alt="" />
               <input
-                onChange={(e) => setName(e.target.value)}
-                className="outline-none text-sm"
-                value={name}
-                type="text"
-                placeholder="Company Name"
+                onChange={(e) => setEmail(e.target.value)}
+                className="outline-none text-sm w-full"
+                value={email}
+                type="email"
+                placeholder="Email"
                 required
               />
             </div>
-          )}
-          <div className="border px-4 py-2 flex items-center gap-2 rounded-full mt-5">
-            <img src={assets.email_icon} alt="" />
-            <input
-              onChange={(e) => setEmail(e.target.value)}
-              className="outline-none text-sm"
-              value={email}
-              type="text"
-              placeholder="Email"
-              required
-            />
-          </div>
-          <div className="border px-4 py-2 flex items-center gap-2 rounded-full mt-5">
-            <img src={assets.lock_icon} alt="" />
-            <input
-              onChange={(e) => setPassword(e.target.value)}
-              className="outline-none text-sm"
-              value={password}
-              type="text"
-              placeholder="Password"
-              required
-            />
-          </div>
-          <p className="text-sm text-blue-600 my-4 cursor-pointer">
+            <div className="border px-4 py-2 flex items-center gap-2 rounded-full mt-5">
+              <img src={assets.lock_icon} alt="" />
+              <input
+                onChange={(e) => setPassword(e.target.value)}
+                className="outline-none text-sm w-full"
+                value={password}
+                type="password"
+                placeholder="Password"
+                required
+              />
+            </div>
+          </>
+        )}
+
+        {state === "Login" && (
+          <p className="text-sm text-blue-600 mt-4 cursor-pointer">
             Forgot password?
           </p>
-        </>
-        <button className="bg-blue-600 w-full text-white py-2 rounded-full">
-          {state === "Login" ? "login" : "create account"}
+        )}
+
+        <button
+          type="submit"
+          className="bg-blue-600 hover:bg-blue-700 active:bg-blue-800 transition-colors duration-200 mt-4 w-full text-white py-2 rounded-full cursor-pointer"
+        >
+          {state === "Login"
+            ? "login"
+            : isTextDataSubmited
+              ? "create account"
+              : "next"}
         </button>
         {state === "Login" && (
-          <p>
+          <p className="mt-5 text-center">
             Don't have an account?{" "}
             <span
-              className="cursor-pointer"
-              onClick={() => setState("Sign up")}
+              className="text-blue-600 cursor-pointer"
+              onClick={() => setState("Sign Up")}
             >
               Sign up
             </span>
           </p>
         )}
-        {state === "Sign up" && (
-          <p>
+        {state === "Sign Up" && (
+          <p className="mt-5 text-center">
             Already have an account?{" "}
-            <span className="cursor-pointer" onClick={() => setState("Login")}>
+            <span
+              className="text-blue-600 cursor-pointer"
+              onClick={() => setState("Login")}
+            >
               Login
             </span>
           </p>
         )}
+        <button
+          type="button"
+          onClick={() => setShowRecruiterLogin(false)}
+          className="absolute top-5 right-5 cursor-pointer"
+          aria-label="Close recruiter login"
+        >
+          <img src={assets.cross_icon} alt="" />
+        </button>
       </form>
     </div>
   );
