@@ -64,7 +64,7 @@ const ViewApplications = () => {
                 <td className="py-3 px-4 border border-gray-200 relative text-center">
                   <div className="relative inline-block group">
                     <button className="text-gray-500 action-button">...</button>
-                    <div className="z-10 hidden absolute right-0 left-0 top-full pt-2 w-32 group-hover:block">
+                    <div className="z-10 hidden absolute left-0 -translate-x-1/4 top-full pt-2 w-25 group-hover:block">
                       <div className="bg-white border border-gray-200 rounded shadow-md">
                         <button className="block w-full text-center px-4 py-2 text-blue-500 hover:bg-gray-100">
                           Accept
