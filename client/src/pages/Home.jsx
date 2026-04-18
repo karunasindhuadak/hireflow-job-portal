@@ -12,7 +12,7 @@ const Home = () => {
       <Hero />
       <JobListing />
       <AppDownload />
-      <Footer/>
+      <Footer />
     </div>
   );
 };
