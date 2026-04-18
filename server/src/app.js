@@ -2,6 +2,7 @@ import express, { json } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import * as Sentry from "@sentry/node";
+import { clerkWebhooks } from "./controllers/webhooks.js";
 
 const app = express();
 
@@ -19,6 +20,7 @@ app.use(cookieParser());
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
+app.post("/webhooks", clerkWebhooks);
 
 // Sentry error handling middleware should be added after all routes
 Sentry.setupExpressErrorHandler(app);
