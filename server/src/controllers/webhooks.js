@@ -11,7 +11,7 @@ const clerkWebhooks = async (req, res) => {
     await wh.verify(JSON.stringify(req.body), {
       "svix-id": req.headers["svix-id"],
       "svix-timestamp": req.headers["svix-timestamp"],
-      "svix-timestamp": req.headers["svix-timestamp"],
+      "svix-signature": req.headers["svix-signature"],
     });
 
     // Getting data and type from the request body
