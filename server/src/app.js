@@ -2,7 +2,7 @@ import express, { json } from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import * as Sentry from "@sentry/node";
-import { clerkWebhooks } from "./controllers/webhooks.js";
+import { clerkWebhooks } from "./controllers/webhooks.controller.js";
 
 const app = express();
 
