@@ -9,11 +9,12 @@ import {
   postJob,
   registerCompany,
 } from "../controllers/company.controller.js";
+import { upload } from "../middlewares/multer.middleware.js";
 
 const companyRouter = Router();
 
 // Register a new company
-companyRouter.post("/register", registerCompany);
+companyRouter.post("/register", upload.single("image"), registerCompany);
 
 // Company login
 companyRouter.post("/login", loginCompany);
@@ -35,3 +36,5 @@ companyRouter.post("/change-status", changeJobApplicationStatus);
 
 // Change Application Visibility
 companyRouter.post("/change-visibility", changeJobVisibility);
+
+export default companyRouter;

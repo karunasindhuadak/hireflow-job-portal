@@ -22,6 +22,12 @@ app.get("/", (req, res) => {
 });
 app.post("/webhooks", clerkWebhooks);
 
+// Routes import
+import companyRouter from "./routes/company.routes.js";
+
+// ROutes Declaration
+app.use("/api/company", companyRouter);
+
 // Sentry error handling middleware should be added after all routes
 Sentry.setupExpressErrorHandler(app);
 
