@@ -6,10 +6,12 @@ import {
   getCompanyJobApplicants,
   getCompanyPostedJobs,
   loginCompany,
+  logoutCompany,
   postJob,
   registerCompany,
 } from "../controllers/company.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
+import { verifyJWT } from "../middlewares/auth.middleware.js";
 
 const companyRouter = Router();
 
@@ -19,22 +21,25 @@ companyRouter.post("/register", upload.single("image"), registerCompany);
 // Company login
 companyRouter.post("/login", loginCompany);
 
+// Company logout
+companyRouter.post("/logout", verifyJWT, logoutCompany);
+
 // Get company data
-companyRouter.get("/company", getCompanyData);
+companyRouter.get("/company", verifyJWT, getCompanyData);
 
 // Post a job
-companyRouter.post("/post-job", postJob);
+companyRouter.post("/post-job", verifyJWT, postJob);
 
 // Get applicants data of company
-companyRouter.get("/applicants", getCompanyJobApplicants);
+companyRouter.get("/applicants", verifyJWT, getCompanyJobApplicants);
 
 // Get company job list
-companyRouter.get("/list-jobs", getCompanyPostedJobs);
+companyRouter.get("/list-jobs", verifyJWT, getCompanyPostedJobs);
 
 // Change Applications Status
-companyRouter.post("/change-status", changeJobApplicationStatus);
+companyRouter.post("/change-status", verifyJWT, changeJobApplicationStatus);
 
 // Change Application Visibility
-companyRouter.post("/change-visibility", changeJobVisibility);
+companyRouter.post("/change-visibility", verifyJWT, changeJobVisibility);
 
 export default companyRouter;

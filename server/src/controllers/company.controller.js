@@ -3,6 +3,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { Company } from "../models/company.model.js";
+import { Job } from "../models/job.model.js";
 
 const generateAccessTokenAndRefreshToken = async (companyId) => {
   try {
@@ -58,7 +59,7 @@ const registerCompany = asyncHandler(async (req, res) => {
     secure: process.env.NODE_ENV === "production",
     sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
   };
-  
+
   return res
     .status(201)
     .cookie("accessToken", accessToken, options)
@@ -69,21 +70,114 @@ const registerCompany = asyncHandler(async (req, res) => {
         {
           company: signupCompany,
           accessToken,
-          refreshToken
+          refreshToken,
         },
         "Company registered successfully",
-      )
-    )
+      ),
+    );
 });
 
 // Company login
-const loginCompany = asyncHandler(async (req, res) => {});
+const loginCompany = asyncHandler(async (req, res) => {
+  const { email, password } = req.body;
+  if (!email || !password) {
+    throw new ApiError(400, "All fields are required");
+  }
+  const company = await Company.findOne({ email });
+  if (!company) {
+    throw new ApiError(400, "Company not found");
+  }
+  const isPasswordCorrect = await company.isPasswordCorrect(password);
+  if (!isPasswordCorrect) {
+    throw new ApiError(400, "Invalid credentials");
+  }
+  const { accessToken, refreshToken } =
+    await generateAccessTokenAndRefreshToken(company._id);
+  const loggedInCompany = await Company.findById(company._id).select(
+    "-password -refreshToken -__v",
+  );
+  const options = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+  };
+
+  return res
+    .status(200)
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
+    .json(
+      new ApiResponse(
+        200,
+        {
+          company: loggedInCompany,
+          accessToken,
+          refreshToken,
+        },
+        "Company logged in successfully",
+      ),
+    );
+});
+
+// logout company
+const logoutCompany = asyncHandler(async (req, res) => {
+  const companyId = req.company._id;
+  await Company.findByIdAndUpdate(
+    companyId,
+    {
+      $unset: {
+        refreshToken: 1,
+      },
+    },
+    { new: true },
+  );
+
+  const options = {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+  };
+
+  return res
+    .status(200)
+    .clearCookie("accessToken", options)
+    .clearCookie("refreshToken", options)
+    .json(new ApiResponse(200, {}, "logged out successfully"));
+});
 
 // Get company data
 const getCompanyData = asyncHandler(async (req, res) => {});
 
 // Post a new job
-const postJob = asyncHandler(async (req, res) => {});
+const postJob = asyncHandler(async (req, res) => {
+  const { title, description, location, salary, category, level } = req.body;
+  if (!title || !description || !location || !salary || !category || !level) {
+    throw new ApiError(400, "All fields are required");
+  }
+  const companyId = req.company._id;
+  if (!companyId) {
+    throw new ApiError(401, "Unauthorized request");
+  }
+  const newJob = new Job({
+    title,
+    description,
+    location,
+    salary,
+    category,
+    level,
+    date: Date.now(),
+    companyId,
+  });
+  await newJob.save();
+
+  if (!newJob) {
+    throw new ApiError(500, "Failed to post job");
+  }
+
+  return res
+    .status(201)
+    .json(new ApiResponse(201, { job: newJob }, "Job posted successfully"));
+});
 
 // Get company job applicants
 const getCompanyJobApplicants = asyncHandler(async (req, res) => {});
@@ -100,6 +194,7 @@ const changeJobVisibility = asyncHandler(async (req, res) => {});
 export {
   registerCompany,
   loginCompany,
+  logoutCompany,
   getCompanyData,
   postJob,
   getCompanyJobApplicants,
