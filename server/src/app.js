@@ -28,7 +28,7 @@ import jobRouter from "./routes/job.routes.js";
 
 // Routes Declaration
 app.use("/api/company", companyRouter);
-app.use("api/job", jobRouter);
+app.use("/api/jobs", jobRouter);
 
 // Sentry error handling middleware should be added after all routes
 Sentry.setupExpressErrorHandler(app);

@@ -39,4 +39,10 @@ const jobSchema = new Schema({
   },
 });
 
+// Index on companyId — speeds up job lookups per company
+jobSchema.index({ companyId: 1 });
+
+// Index on visible — speeds up public job listing queries
+jobSchema.index({ visible: 1 });
+
 export const Job = mongoose.model("Job", jobSchema);

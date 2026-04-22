@@ -146,7 +146,12 @@ const logoutCompany = asyncHandler(async (req, res) => {
 });
 
 // Get company data
-const getCompanyData = asyncHandler(async (req, res) => {});
+const getCompanyData = asyncHandler(async (req, res) => {
+  const company = req.company;
+  return res
+    .status(200)
+    .json(new ApiResponse(200, company, "Company data fetched successfully"));
+});
 
 // Post a new job
 const postJob = asyncHandler(async (req, res) => {
@@ -183,13 +188,37 @@ const postJob = asyncHandler(async (req, res) => {
 const getCompanyJobApplicants = asyncHandler(async (req, res) => {});
 
 // Get company posted jobs
-const getCompanyPostedJobs = asyncHandler(async (req, res) => {});
+const getCompanyPostedJobs = asyncHandler(async (req, res) => {
+  const compId = req.company._id;
+  const jobs = await Job.find({ companyId: compId });
+
+  // TODO: Adding no. of applicants info in data
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, jobs, "Company posted jobs fetched successfully"),
+    );
+});
 
 // Change job application status
 const changeJobApplicationStatus = asyncHandler(async (req, res) => {});
 
 // Change job visibility
-const changeJobVisibility = asyncHandler(async (req, res) => {});
+const changeJobVisibility = asyncHandler(async (req, res) => {
+  const { id } = req.body;
+  const companyId = req.company._id;
+  const job = await Job.findById(id);
+
+  if (companyId.toString() === job.companyId.toString()) {
+    job.visible = !job.visible;
+  }
+  await job.save();
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, job, "Job visibility updated successfully"));
+});
 
 export {
   registerCompany,
