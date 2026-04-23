@@ -25,7 +25,7 @@ companyRouter.post("/login", loginCompany);
 companyRouter.post("/logout", verifyJWT, logoutCompany);
 
 // Get company data
-companyRouter.get("/company", verifyJWT, getCompanyData);
+companyRouter.get("/company-data", verifyJWT, getCompanyData);
 
 // Post a job
 companyRouter.post("/post-job", verifyJWT, postJob);

@@ -1,29 +1,45 @@
 import React from "react";
 import { assets } from "../assets/assets";
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { AppContext } from "../context/AppContext";
 
 const Dashboard = () => {
+  const { companyData, handleLogout } = useContext(AppContext);
+  const navigate = useNavigate();
+
+  const onLogout = async () => {
+    await handleLogout();
+    // navigate("/dashboard/*");
+  };
+
   return (
     <div className="min-h-screen">
       {/*Navbar for Recruiter Panel*/}
       <div className="shadow py-4">
         <div className="px-5 flex justify-between items-center">
           <img
+            onClick={() => navigate("/")}
             className="max-sm:w-32 sm:h-10 cursor-pointer"
             src={assets.logo}
             alt=""
           />
           <div className="flex items-center gap-3">
-            <p className="max-sm:hidden">Welcome, Karunasindhu</p>
+            <p className="max-sm:hidden">
+              Welcome, {companyData?.name || "Recruiter"}
+            </p>
             <div className="relative group">
               <img
                 className="w-8 border rounded-full"
-                src={assets.company_icon}
+                src={companyData?.image || assets.person_icon}
                 alt=""
               />
               <div className="absolute hidden group-hover:block top-full right-0 z-10 text-black rounded pt-2">
                 <ul className="list-none m-0 p-2 bg-white rounded-md border text-sm shadow-md">
-                  <li className="py-1 px-2 cursor-pointer pr-10 hover:bg-gray-50 rounded">
+                  <li
+                    onClick={() => onLogout()}
+                    className="py-1 px-2 cursor-pointer pr-10 hover:bg-gray-50 rounded"
+                  >
                     Logout
                   </li>
                 </ul>

@@ -1,21 +1,72 @@
 import React, { useContext, useEffect, useState } from "react";
 import { assets } from "../assets/assets";
 import { AppContext } from "../context/AppContext";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const RecruiterLogin = () => {
   const [state, setState] = useState("Login");
   const [name, setName] = useState("");
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
+  const navigate = useNavigate();
 
   const [image, setImage] = useState(null);
   const [isTextDataSubmited, setIsTextDataSubmited] = useState(false);
-  const { setShowRecruiterLogin } = useContext(AppContext);
+  const {
+    setShowRecruiterLogin,
+    setCompanyAccessToken,
+    backendUrl,
+    setCompanyData,
+  } = useContext(AppContext);
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     if (state === "Sign Up" && !isTextDataSubmited) {
       setIsTextDataSubmited(true);
+      return;
+    }
+    try {
+      if (state === "Login") {
+        const { data } = await axios.post(`${backendUrl}/api/company/login`, {
+          email,
+          password,
+        });
+        if (data.success) {
+          // console.log(data);
+          setCompanyData(data.data.company);
+          setCompanyAccessToken(data.data.accessToken);
+          localStorage.setItem("companyAccessToken", data.data.accessToken);
+          setShowRecruiterLogin(false);
+          navigate("/dashboard");
+        } else {
+          toast.error(data.message || "Login failed");
+        }
+      } else {
+        const formdata = new FormData();
+        formdata.append("name", name);
+        formdata.append("email", email);
+        formdata.append("password", password);
+        formdata.append("image", image);
+
+        const { data } = await axios.post(
+          `${backendUrl}/api/company/register`,
+          formdata,
+        );
+
+        if (data.success) {
+          setCompanyData(data.data.company);
+          setCompanyAccessToken(data.data.accessToken);
+          localStorage.setItem("companyAccessToken", data.data.accessToken);
+          setShowRecruiterLogin(false);
+          navigate("/dashboard");
+        } else {
+          toast.error(data.message || "Login failed");
+        }
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Something went wrong");
     }
   };
 
