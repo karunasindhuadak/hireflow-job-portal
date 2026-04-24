@@ -1,6 +1,9 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import Quill from "quill";
 import { JobCategories, JobLocations } from "../assets/assets";
+import axios from "axios";
+import { AppContext } from "../context/AppContext";
+import { toast } from "react-toastify";
 
 const AddJob = () => {
   const [title, setTitle] = useState("");
@@ -9,10 +12,36 @@ const AddJob = () => {
   const [level, setLevel] = useState("Beginner Level");
   const [salary, setSalary] = useState(0);
 
+  const { backendUrl, companyAccessToken } = useContext(AppContext);
   //   console.log("Salary: ", salary);
 
   const editorRef = useRef(null);
   const quillRef = useRef(null);
+
+  const handleFormSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const description = quillRef.current.root.innerHTML;
+      const { data } = await axios.post("/api/company/post-job", {
+        title,
+        category,
+        location,
+        level,
+        salary,
+        description,
+      });
+      if (data.success) {
+        // console.log("Job posted successfully: ", data.data.job);
+        setTitle("");
+        setSalary(0);
+        quillRef.current.root.innerHTML = "";
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Something went wrong");
+    }
+  };
 
   useEffect(() => {
     if (!quillRef.current && editorRef.current) {
@@ -23,7 +52,10 @@ const AddJob = () => {
   }, []);
 
   return (
-    <form className="container p-4 flex flex-col w-full items-start gap-3">
+    <form
+      onSubmit={handleFormSubmit}
+      className="container p-4 flex flex-col w-full items-start gap-3"
+    >
       <div className="w-full">
         <p className="mb-2">Job Title</p>
         <input
@@ -94,7 +126,10 @@ const AddJob = () => {
         />
       </div>
 
-      <button className="w-28 py-3 mt-4 bg-black text-white rounded">
+      <button
+        type="submit"
+        className="w-28 py-3 mt-4 bg-black text-white rounded"
+      >
         ADD
       </button>
     </form>

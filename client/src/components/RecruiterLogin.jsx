@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { assets } from "../assets/assets";
 import { AppContext } from "../context/AppContext";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
@@ -17,7 +16,7 @@ const RecruiterLogin = () => {
   const {
     setShowRecruiterLogin,
     setCompanyAccessToken,
-    backendUrl,
+    axios,
     setCompanyData,
   } = useContext(AppContext);
 
@@ -29,7 +28,7 @@ const RecruiterLogin = () => {
     }
     try {
       if (state === "Login") {
-        const { data } = await axios.post(`${backendUrl}/api/company/login`, {
+        const { data } = await axios.post("/api/company/login", {
           email,
           password,
         });
@@ -37,6 +36,8 @@ const RecruiterLogin = () => {
           // console.log(data);
           setCompanyData(data.data.company);
           setCompanyAccessToken(data.data.accessToken);
+          axios.defaults.headers.common["Authorization"] =
+            `Bearer ${data.data.accessToken}`;
           localStorage.setItem("companyAccessToken", data.data.accessToken);
           setShowRecruiterLogin(false);
           navigate("/dashboard");
@@ -50,14 +51,13 @@ const RecruiterLogin = () => {
         formdata.append("password", password);
         formdata.append("image", image);
 
-        const { data } = await axios.post(
-          `${backendUrl}/api/company/register`,
-          formdata,
-        );
+        const { data } = await axios.post("/api/company/register", formdata);
 
         if (data.success) {
           setCompanyData(data.data.company);
           setCompanyAccessToken(data.data.accessToken);
+          axios.defaults.headers.common["Authorization"] =
+            `Bearer ${data.data.accessToken}`;
           localStorage.setItem("companyAccessToken", data.data.accessToken);
           setShowRecruiterLogin(false);
           navigate("/dashboard");
