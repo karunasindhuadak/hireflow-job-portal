@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import Quill from "quill";
 import { JobCategories, JobLocations } from "../assets/assets";
-import axios from "axios";
 import { AppContext } from "../context/AppContext";
 import { toast } from "react-toastify";
 
@@ -12,7 +11,7 @@ const AddJob = () => {
   const [level, setLevel] = useState("Beginner Level");
   const [salary, setSalary] = useState(0);
 
-  const { backendUrl, companyAccessToken } = useContext(AppContext);
+  const { axios } = useContext(AppContext);
   //   console.log("Salary: ", salary);
 
   const editorRef = useRef(null);

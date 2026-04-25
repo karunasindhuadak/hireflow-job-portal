@@ -21,7 +21,17 @@ export const AppContextProvider = (props) => {
   const [companyData, setCompanyData] = useState(null);
 
   const fetchJobs = async () => {
-    setJobs(jobsData);
+    try {
+      const { data } = await axios.get("/api/jobs");
+      if (data.success) {
+        console.log("Jobs fetched: ", data.data);
+        setJobs(data.data);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Something went wrong");
+    }
   };
   // Function to handle logout
   const handleLogout = async () => {

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { assets } from "../assets/assets";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useContext } from "react";
@@ -12,7 +12,11 @@ const Dashboard = () => {
     await handleLogout();
     // navigate("/dashboard/*");
   };
-
+  useEffect(() => {
+    if (companyData) {
+      navigate("/dashboard/manage-jobs");
+    }
+  }, [companyData]);
   return (
     <div className="min-h-screen">
       {/*Navbar for Recruiter Panel*/}

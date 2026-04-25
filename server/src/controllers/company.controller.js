@@ -190,9 +190,36 @@ const getCompanyJobApplicants = asyncHandler(async (req, res) => {});
 // Get company posted jobs
 const getCompanyPostedJobs = asyncHandler(async (req, res) => {
   const compId = req.company._id;
-  const jobs = await Job.find({ companyId: compId });
+  const jobs = await Job.aggregate([
+    {
+      $match: { companyId: compId },
+    },
+    {
+      $sort: { date: -1 },
+    },
+    {
+      $lookup: {
+        from: "jobapplications",
+        localField: "_id",
+        foreignField: "jobId",
+        as: "applications",
+      },
+    },
+    {
+      $addFields: {
+        applicants: { $size: "$applications" },
+      },
+    },
+    {
+      $project: {
+        applications: 0,
+      },
+    },
+  ]);
 
-  // TODO: Adding no. of applicants info in data
+  if (!jobs) {
+    throw new ApiError(500, "Failed to fetch company posted jobs");
+  }
 
   return res
     .status(200)
@@ -206,8 +233,9 @@ const changeJobApplicationStatus = asyncHandler(async (req, res) => {});
 
 // Change job visibility
 const changeJobVisibility = asyncHandler(async (req, res) => {
-  const { id } = req.body;
+  const { id } = req.body; // job id
   const companyId = req.company._id;
+
   const job = await Job.findById(id);
 
   if (companyId.toString() === job.companyId.toString()) {

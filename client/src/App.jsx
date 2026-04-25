@@ -25,25 +25,18 @@ const App = () => {
           <Route path="/" element={<Home />} />
           <Route path="/apply-job/:id" element={<ApplyJob />} />
           <Route path="/applications" element={<Applications />} />
-          <Route path="/dashboard" element={<Dashboard />}>
-            {companyAccessToken ? (
-              <>
+          {companyAccessToken ? (
+            <>
+              <Route path="/dashboard" element={<Dashboard />}>
                 <Route path="add-job" element={<AddJob />} />
                 <Route path="manage-jobs" element={<ManageJobs />} />
                 <Route
                   path="view-applications"
                   element={<ViewApplications />}
                 />
-              </>
-            ) : (
-              <Route
-                path="*"
-                element={
-                  <p className="p-5">Please login to access the dashboard</p>
-                }
-              />
-            )}
-          </Route>
+              </Route>
+            </>
+          ) : null}
         </Routes>
       </div>
     </Sentry.ErrorBoundary>
