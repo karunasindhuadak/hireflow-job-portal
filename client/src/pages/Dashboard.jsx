@@ -90,14 +90,18 @@ const Dashboard = () => {
                 }
                 to={"/dashboard/view-applications"}
               >
-                <img className="min-w-4 invert" src={assets.person_tick_icon} alt="" />
+                <img
+                  className="min-w-4 invert"
+                  src={assets.person_tick_icon}
+                  alt=""
+                />
                 <p className="max-sm:hidden">View Applications</p>
               </NavLink>
             </li>
           </ul>
         </div>
 
-        <div className="flex-1 overflow-auto">
+        <div className="flex-1 h-full p-2 sm:p-5">
           <Outlet />
         </div>
       </div>
