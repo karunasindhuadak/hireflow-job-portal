@@ -19,14 +19,17 @@ const clerkWebhooks = async (req, res) => {
 
     switch (type) {
       case "user.created": {
-        const userData = {
-          _id: data.id,
-          email: data.email_addresses[0].email_address,
-          name: data.first_name + " " + data.last_name,
-          image: data.image_url,
-          resume: "",
-        };
-        await User.create(userData);
+        const existingUser = await User.findById(data.id);
+        if (!existingUser) {
+          const userData = {
+            _id: data.id,
+            email: data.email_addresses[0].email_address,
+            name: data.first_name + " " + data.last_name,
+            image: data.image_url,
+            resume: "",
+          };
+          await User.create(userData);
+        }
         res.json({});
         break;
       }
