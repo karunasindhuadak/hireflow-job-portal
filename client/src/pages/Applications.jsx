@@ -102,66 +102,74 @@ const Applications = () => {
           )}
         </div>
         <h2 className="text-xl font-semibold mb-4">Jobs Applied</h2>
-        <div className="overflow-x-auto border border-gray-300 rounded-lg">
-          <table className="min-w-full bg-white overflow-hidden">
-            <thead className="bg-gray-100">
-              <tr>
-                <th className="py-3 px-4 border-b border-gray-300 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">
-                  Company
-                </th>
-                <th className="py-3 px-4 border-b border-gray-300 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">
-                  Job Title
-                </th>
-                <th className="py-3 px-4 border-b border-gray-300 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider max-sm:hidden">
-                  Location
-                </th>
-                <th className="py-3 px-4 border-b border-gray-300 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider max-sm:hidden">
-                  Date
-                </th>
-                <th className="py-3 px-4 border-b border-gray-300 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">
-                  Action
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {userApplications.map((job, index) =>
-                true ? (
-                  <tr
-                    key={index}
-                    className="hover:bg-gray-50 even:bg-gray-50/50 transition-colors"
-                  >
-                    <td className="py-3 px-4 border-b border-gray-200">
-                      <div className="flex items-center gap-2">
-                        <img
-                          className="h-8 w-8"
-                          src={job.companyId.image}
-                          alt=""
-                        />
-                        {job.companyId.name}
-                      </div>
-                    </td>
-                    <td className="py-3 px-4 border-b border-gray-200">
-                      {job.jobId.title}
-                    </td>
-                    <td className="py-3 px-4 border-b border-gray-200 max-sm:hidden">
-                      {job.jobId.location}
-                    </td>
-                    <td className="py-3 px-4 border-b border-gray-200 max-sm:hidden">
-                      {moment(job.date).format("ll")}
-                    </td>
-                    <td className="py-3 px-4 border-b border-gray-200">
-                      <span
-                        className={`${job.status === "Accepted" ? "bg-green-100 text-green-700" : job.status === "Rejected" ? "bg-red-100 text-red-700" : "bg-blue-100 text-blue-700"} px-4 py-1.5 rounded-full text-sm font-medium`}
-                      >
-                        {job.status}
-                      </span>
-                    </td>
-                  </tr>
-                ) : null,
-              )}
-            </tbody>
-          </table>
-        </div>
+        {userApplications && userApplications.length === 0 ? (
+          <div className="flex items-center justify-center h-[50vh]">
+            <p className="text-xl sm: text-2xl">
+              You have not applied to any jobs yet.
+            </p>
+          </div>
+        ) : (
+          <div className="overflow-x-auto border border-gray-300 rounded-lg">
+            <table className="min-w-full bg-white overflow-hidden">
+              <thead className="bg-gray-100">
+                <tr>
+                  <th className="py-3 px-4 border-b border-gray-300 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                    Company
+                  </th>
+                  <th className="py-3 px-4 border-b border-gray-300 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                    Job Title
+                  </th>
+                  <th className="py-3 px-4 border-b border-gray-300 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider max-sm:hidden">
+                    Location
+                  </th>
+                  <th className="py-3 px-4 border-b border-gray-300 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider max-sm:hidden">
+                    Date
+                  </th>
+                  <th className="py-3 px-4 border-b border-gray-300 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                    Action
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {userApplications.map((job, index) =>
+                  true ? (
+                    <tr
+                      key={index}
+                      className="hover:bg-gray-50 even:bg-gray-50/50 transition-colors"
+                    >
+                      <td className="py-3 px-4 border-b border-gray-200">
+                        <div className="flex items-center gap-2">
+                          <img
+                            className="h-8 w-8"
+                            src={job.companyId.image}
+                            alt=""
+                          />
+                          {job.companyId.name}
+                        </div>
+                      </td>
+                      <td className="py-3 px-4 border-b border-gray-200">
+                        {job.jobId.title}
+                      </td>
+                      <td className="py-3 px-4 border-b border-gray-200 max-sm:hidden">
+                        {job.jobId.location}
+                      </td>
+                      <td className="py-3 px-4 border-b border-gray-200 max-sm:hidden">
+                        {moment(job.date).format("ll")}
+                      </td>
+                      <td className="py-3 px-4 border-b border-gray-200">
+                        <span
+                          className={`${job.status === "Accepted" ? "bg-green-100 text-green-700" : job.status === "Rejected" ? "bg-red-100 text-red-700" : "bg-blue-100 text-blue-700"} px-4 py-1.5 rounded-full text-sm font-medium`}
+                        >
+                          {job.status}
+                        </span>
+                      </td>
+                    </tr>
+                  ) : null,
+                )}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
       <Footer />
     </>
