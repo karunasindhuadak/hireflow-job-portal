@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { AppContext } from "../context/AppContext";
 import Loading from "../components/Loading";
 import Navbar from "../components/Navbar";
@@ -9,11 +9,20 @@ import moment from "moment";
 import JobCard from "../components/JobCard";
 import Footer from "../components/Footer";
 import { toast } from "react-toastify";
+import { useAuth } from "@clerk/react";
 
 const ApplyJob = () => {
   const { id } = useParams();
+  const navigate = useNavigate();
   const [jobData, setJobData] = useState(null);
-  const { jobs, axios } = useContext(AppContext);
+  const { jobs, axios, userData, fetchUserApplications, userApplications } =
+    useContext(AppContext);
+  const { getToken } = useAuth();
+  const [isAlreadyApplied, setIsAlreadyApplied] = useState(false);
+
+  const appliedjobIds = new Set(
+    userApplications.map((app) => app.jobId && app.jobId._id),
+  );
 
   const fetchJobData = async () => {
     try {
@@ -28,11 +37,52 @@ const ApplyJob = () => {
     }
   };
 
+  const handleApplyForJob = async () => {
+    try {
+      if (!userData) {
+        toast.error("Please login to apply for this job");
+      }
+      if (!userData.resume) {
+        navigate("/applications");
+        toast.error("Upload your resume to proceed");
+      }
+      const token = await getToken();
+      const { data } = await axios.post(
+        "api/users/apply",
+        { jobId: id },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      if (data.success) {
+        toast.success(data.message);
+        await fetchUserApplications();
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Something went wrong");
+    }
+  };
+
+  const checkIfAlreadyApplied = () => {
+    const isApplied = userApplications.some(
+      (application) => application.jobId._id === jobData._id,
+    );
+    setIsAlreadyApplied(isApplied);
+  };
+
   useEffect(() => {
     if (id) {
       fetchJobData();
     }
   }, [id]);
+
+  useEffect(() => {
+    if (userApplications.length > 0 && jobData) {
+      checkIfAlreadyApplied();
+    }
+  }, [jobData, userApplications, id]);
 
   return jobData ? (
     <>
@@ -73,8 +123,11 @@ const ApplyJob = () => {
             </div>
 
             <div className="flex flex-col justify-center text-end text-sm max-md:mx-auto max-md:text-center">
-              <button className="bg-blue-600 p-2.5 px-10 text-white rounded">
-                Apply Now
+              <button
+                onClick={handleApplyForJob}
+                className={`${isAlreadyApplied ? "bg-green-600" : "bg-blue-600"} p-2.5 px-10 text-white rounded`}
+              >
+                {isAlreadyApplied ? "Applied" : "Apply Now"}
               </button>
               <p className="mt-2 text-gray-600">
                 Posted {moment(jobData.date).fromNow()}
@@ -89,8 +142,11 @@ const ApplyJob = () => {
                 className="rich-text"
                 dangerouslySetInnerHTML={{ __html: jobData.description }}
               ></div>
-              <button className="bg-blue-600 p-2.5 px-10 text-white rounded mt-10">
-                Apply Now
+              <button
+                onClick={handleApplyForJob}
+                className={`${isAlreadyApplied ? "bg-green-600" : "bg-blue-600"} mt-6 p-2.5 px-10 text-white rounded`}
+              >
+                {isAlreadyApplied ? "Applied" : "Apply Now"}
               </button>
             </div>
             {/* more jobs from the same company*/}
@@ -102,7 +158,7 @@ const ApplyJob = () => {
                     job._id !== jobData._id &&
                     job.companyId._id === jobData.companyId._id,
                 )
-                .filter((job) => true)
+                .filter((job) => !appliedjobIds.has(job._id))
                 .slice(0, 4)
                 .map((job, index) => (
                   <JobCard key={index} job={job} />

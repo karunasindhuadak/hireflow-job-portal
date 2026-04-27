@@ -14,12 +14,12 @@ const configureCloudinary = () => {
   isConfigured = true;
 };
 
-const uploadOnCloudinary = async (localFilePath) => {
+const uploadOnCloudinary = async (localFilePath, resourceType = "auto") => {
   try {
     if (!localFilePath) return null;
     configureCloudinary();
     const response = await cloudinary.uploader.upload(localFilePath, {
-      resource_type: "auto",
+      resource_type: resourceType,
     });
     return response;
   } catch (error) {

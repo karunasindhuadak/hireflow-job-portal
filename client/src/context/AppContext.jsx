@@ -1,7 +1,8 @@
 import { createContext, useEffect, useState } from "react";
-import { jobsData } from "../assets/assets";
+
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useAuth, useUser } from "@clerk/react";
 
 const backendUrl = import.meta.env.VITE_BACKEND_URL;
 axios.defaults.baseURL = backendUrl;
@@ -10,6 +11,8 @@ axios.defaults.withCredentials = true;
 export const AppContext = createContext();
 
 export const AppContextProvider = (props) => {
+  const { user } = useUser();
+  const { getToken } = useAuth();
   const [searchFilter, setSearchFilter] = useState({
     title: "",
     location: "",
@@ -20,11 +23,13 @@ export const AppContextProvider = (props) => {
   const [companyAccessToken, setCompanyAccessToken] = useState(null);
   const [companyData, setCompanyData] = useState(null);
 
+  const [userData, setUserData] = useState(null);
+  const [userApplications, setUserApplications] = useState([]);
+
   const fetchJobs = async () => {
     try {
       const { data } = await axios.get("/api/jobs");
       if (data.success) {
-        console.log("Jobs fetched: ", data.data);
         setJobs(data.data);
       } else {
         toast.error(data.message);
@@ -61,6 +66,43 @@ export const AppContextProvider = (props) => {
       toast.error(error.response?.data?.message || "Something went wrong");
     }
   };
+
+  // Function to fetch user data
+  const fetchUserData = async () => {
+    try {
+      const token = await getToken();
+      const { data } = await axios.get("/api/users/user", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (data.success) {
+        setUserData(data.data);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Something went wrong");
+    }
+  };
+  const fetchUserApplications = async () => {
+    try {
+      const token = await getToken();
+      const { data } = await axios.get("/api/users/applications", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (data.success) {
+        // console.log("User applications fetched: ", data.data);
+        setUserApplications(data.data);
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Something went wrong");
+    }
+  };
   useEffect(() => {
     fetchJobs();
     const getCompanyAccessToken = localStorage.getItem("companyAccessToken");
@@ -75,6 +117,12 @@ export const AppContextProvider = (props) => {
       fetchCompanyData();
     }
   }, [companyAccessToken]);
+  useEffect(() => {
+    if (user) {
+      fetchUserData();
+      fetchUserApplications();
+    }
+  }, [user]);
   const value = {
     searchFilter,
     setSearchFilter,
@@ -90,6 +138,12 @@ export const AppContextProvider = (props) => {
     setCompanyData,
     axios,
     handleLogout,
+    userData,
+    userApplications,
+    setUserApplications,
+    setUserData,
+    fetchUserData,
+    fetchUserApplications,
   };
   return (
     <AppContext.Provider value={value}>{props.children}</AppContext.Provider>

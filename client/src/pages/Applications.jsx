@@ -1,12 +1,57 @@
 import React, { useState } from "react";
 import Navbar from "../components/Navbar";
-import { assets, jobsApplied } from "../assets/assets";
+import { assets } from "../assets/assets";
 import moment from "moment";
 import Footer from "../components/Footer";
+import { useContext } from "react";
+import { AppContext } from "../context/AppContext";
+import { useAuth, useUser } from "@clerk/react";
+import axios from "axios";
+import { toast } from "react-toastify";
+import { useEffect } from "react";
 
 const Applications = () => {
+  const { user } = useUser();
+  // console.log("User in applications page: ", user);
+  const { getToken } = useAuth();
   const [isEdit, setIsEdit] = useState(false);
   const [resume, setResume] = useState(null);
+  const { fetchUserData, userData, userApplications, fetchUserApplications } =
+    useContext(AppContext);
+  const [loading, setLoading] = useState(false);
+  // const [jobsApplied, setJobsApplied] = useState([])
+
+  const handleResumeUpload = async () => {
+    setLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append("resume", resume);
+      // Make API call to upload resume
+      const token = await getToken();
+      const { data } = await axios.post("/api/users/update-resume", formData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (data.success) {
+        toast.success(data.message);
+        await fetchUserData();
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Something went wrong");
+    }
+    setIsEdit(false);
+    setResume(null);
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    if (user) {
+      fetchUserApplications();
+    }
+  }, [user]);
   return (
     <>
       <Navbar />
@@ -14,11 +59,11 @@ const Applications = () => {
       <div className="container px-4 min-h-[65vh] 2xl:px-20 mx-auto my-20">
         <h2>Your Resume</h2>
         <div className="flex gap-2 mb-6 mt-3">
-          {isEdit ? (
+          {isEdit || (userData && userData.resume === "") ? (
             <>
               <label className="flex items-center" htmlFor="resumeUpload">
                 <p className="bg-blue-100 text-blue-600 px-4 py-2 rounded-lg mr-2">
-                  Select Resume
+                  {resume ? resume.name : "Upload Resume"}
                 </p>
                 <input
                   onChange={(e) => setResume(e.target.files[0])}
@@ -31,17 +76,19 @@ const Applications = () => {
                 <img src={assets.profile_upload_icon} alt="" />
               </label>
               <button
-                onClick={() => setIsEdit(false)}
+                onClick={handleResumeUpload}
                 className="bg-green-100 border border-green-400 px-4 py-2 rounded-lg"
               >
-                Save
+                {loading ? "Uploading..." : "Save"}
               </button>
             </>
           ) : (
             <div className="flex gap-2">
               <a
                 className="bg-blue-100 text-blue-600 px-4 py-2 rounded-xl"
-                href=""
+                href={userData?.resume}
+                target="_blank"
+                rel="noopener noreferrer"
               >
                 Resume
               </a>
@@ -77,7 +124,7 @@ const Applications = () => {
               </tr>
             </thead>
             <tbody>
-              {jobsApplied.map((job, index) =>
+              {userApplications.map((job, index) =>
                 true ? (
                   <tr
                     key={index}
@@ -85,15 +132,19 @@ const Applications = () => {
                   >
                     <td className="py-3 px-4 border-b border-gray-200">
                       <div className="flex items-center gap-2">
-                        <img className="h-8 w-8" src={job.logo} alt="" />
-                        {job.company}
+                        <img
+                          className="h-8 w-8"
+                          src={job.companyId.image}
+                          alt=""
+                        />
+                        {job.companyId.name}
                       </div>
                     </td>
                     <td className="py-3 px-4 border-b border-gray-200">
-                      {job.title}
+                      {job.jobId.title}
                     </td>
                     <td className="py-3 px-4 border-b border-gray-200 max-sm:hidden">
-                      {job.location}
+                      {job.jobId.location}
                     </td>
                     <td className="py-3 px-4 border-b border-gray-200 max-sm:hidden">
                       {moment(job.date).format("ll")}

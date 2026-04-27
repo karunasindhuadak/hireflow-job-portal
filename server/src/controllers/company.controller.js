@@ -4,6 +4,8 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { Company } from "../models/company.model.js";
 import { Job } from "../models/job.model.js";
+import { JobApplication } from "../models/jobApplication.model.js";
+import mongoose from "mongoose";
 
 const generateAccessTokenAndRefreshToken = async (companyId) => {
   try {
@@ -185,7 +187,73 @@ const postJob = asyncHandler(async (req, res) => {
 });
 
 // Get company job applicants
-const getCompanyJobApplicants = asyncHandler(async (req, res) => {});
+const getCompanyJobApplicants = asyncHandler(async (req, res) => {
+  const companyId = req.company._id;
+  const applications = await JobApplication.aggregate([
+    {
+      $match: { companyId },
+    },
+    {
+      $sort: { date: -1 },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "userId",
+        foreignField: "_id",
+        as: "userId",
+        pipeline: [
+          {
+            $project: {
+              name: 1,
+              image: 1,
+              resume: 1,
+            },
+          },
+        ],
+      },
+    },
+    {
+      $lookup: {
+        from: "jobs",
+        localField: "jobId",
+        foreignField: "_id",
+        as: "jobId",
+        pipeline: [
+          {
+            $project: {
+              title: 1,
+              location: 1,
+            },
+          },
+        ],
+      },
+    },
+    {
+      $addFields: {
+        userId: {
+          $arrayElemAt: ["$userId", 0],
+        },
+        jobId: {
+          $arrayElemAt: ["$jobId", 0],
+        },
+      },
+    },
+  ]);
+  if (applications.length === 0) {
+    throw new ApiError(404, "No job applications found for this company");
+  }
+
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(
+        200,
+        applications,
+        "Company job applications fetched successfully",
+      ),
+    );
+});
 
 // Get company posted jobs
 const getCompanyPostedJobs = asyncHandler(async (req, res) => {
@@ -229,7 +297,29 @@ const getCompanyPostedJobs = asyncHandler(async (req, res) => {
 });
 
 // Change job application status
-const changeJobApplicationStatus = asyncHandler(async (req, res) => {});
+const changeJobApplicationStatus = asyncHandler(async (req, res) => {
+  const { id, status } = req.body; // application id
+  const companyId = req.company._id;
+  if (!id || !status) {
+    throw new ApiError(400, "All fields are required");
+  }
+  if (!["Pending", "Accepted", "Rejected"].includes(status)) {
+    throw new ApiError(400, "Invalid status");
+  }
+  const application = await JobApplication.findByIdAndUpdate(
+    id,
+    { status },
+    { new: true },
+  );
+  if (!application) {
+    throw new ApiError(404, "Job application not found");
+  }
+  return res
+    .status(200)
+    .json(
+      new ApiResponse(200, {}, "Job application status updated successfully"),
+    )
+});
 
 // Change job visibility
 const changeJobVisibility = asyncHandler(async (req, res) => {

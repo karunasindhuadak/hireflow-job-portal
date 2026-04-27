@@ -6,10 +6,12 @@ import { JobApplication } from "../models/jobApplication.model.js";
 import { Job } from "../models/job.model.js";
 import mongoose from "mongoose";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import { getAuth } from "@clerk/express";
 
 // get user data
 const getUserData = asyncHandler(async (req, res) => {
-  const userId = req.auth.userId;
+  const { userId } = getAuth(req);
+  // console.log("Fetching data ", getAuth(req));
   const user = await User.findById(userId).select("-__v");
   if (!user) {
     throw new ApiError(404, "User not found");
@@ -22,7 +24,7 @@ const getUserData = asyncHandler(async (req, res) => {
 // Apply for a job
 const applyForJob = asyncHandler(async (req, res) => {
   const { jobId } = req.body;
-  const userId = req.auth.userId;
+  const { userId } = getAuth(req);
 
   const isAlreadyApplied = await JobApplication.findOne({ jobId, userId });
   if (isAlreadyApplied) {
@@ -45,10 +47,13 @@ const applyForJob = asyncHandler(async (req, res) => {
 
 // Get user applied jobs application
 const getUserJobApplications = asyncHandler(async (req, res) => {
-  const userId = req.auth.userId;
+  const { userId } = getAuth(req);
   const applications = await JobApplication.aggregate([
     {
       $match: { userId },
+    },
+    {
+      $sort: { date: -1 },
     },
     {
       $lookup: {
@@ -114,12 +119,12 @@ const getUserJobApplications = asyncHandler(async (req, res) => {
 
 // Update user profile (resume)
 const updateUserResume = asyncHandler(async (req, res) => {
-  const userId = req.auth.userId;
+  const { userId } = getAuth(req);
   const resumeLocalPath = req.file?.path;
   if (!resumeLocalPath) {
     throw new ApiError(400, "Resume file is required");
   }
-  const resume = await uploadOnCloudinary(resumeLocalPath);
+  const resume = await uploadOnCloudinary(resumeLocalPath, "raw");
   if (!resume || !resume.secure_url) {
     throw new ApiError(500, "Failed to upload resume");
   }

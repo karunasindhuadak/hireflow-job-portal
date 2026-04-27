@@ -6,6 +6,7 @@ import {
   updateUserResume,
 } from "../controllers/user.controller.js";
 import { upload } from "../middlewares/multer.middleware.js";
+import { requireAuth } from "@clerk/express";
 
 const userRouter = Router();
 
