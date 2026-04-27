@@ -23,7 +23,6 @@ const JobListing = () => {
         ? prev.filter((c) => c !== category)
         : [...prev, category],
     );
-    // console.log(selectedCategories);
   };
 
   const handleLocationChange = (location) => {
@@ -66,18 +65,18 @@ const JobListing = () => {
   return (
     <div className="container 2xl:px-20 mx-auto flex flex-col lg:flex-row max-lg:space-y-8 py-8">
       {/* Sidebar */}
-      <div className="w-full lg:w-1/4 bg-white px-4">
+      <div className="w-full lg:w-1/4 px-4">
         {/* Search Filter Section */}
         {isSearched &&
           (searchFilter.title !== "" || searchFilter.location !== "") && (
             <div>
-              <h2 className="font-medium text-lg mb-4">Current Search</h2>
-              <div className="mb-4 text-gray-600 ">
+              <h2 className="font-medium text-lg mb-4 text-white">Current Search</h2>
+              <div className="mb-4 text-gray-400 ">
                 {searchFilter.title && (
-                  <span className="inline-flex items-center gap-2.5 bg-blue-50 border border-blue-200 px-4 py-1.5 rounded">
+                  <span className="inline-flex items-center gap-2.5 bg-cyan-accent/10 border border-cyan-accent/30 text-cyan-accent px-4 py-1.5 rounded">
                     {searchFilter.title}
                     <img
-                      className="cursor-pointer"
+                      className="cursor-pointer invert"
                       onClick={(e) =>
                         setSearchFilter((prev) => ({ ...prev, title: "" }))
                       }
@@ -87,10 +86,10 @@ const JobListing = () => {
                   </span>
                 )}
                 {searchFilter.location && (
-                  <span className="ml-2 inline-flex items-center gap-2.5 bg-red-50 border border-red-200 px-4 py-1.5 rounded">
+                  <span className="ml-2 inline-flex items-center gap-2.5 bg-coral-accent/10 border border-coral-accent/30 text-coral-accent px-4 py-1.5 rounded">
                     {searchFilter.location}
                     <img
-                      className="cursor-pointer"
+                      className="cursor-pointer invert"
                       onClick={(e) =>
                         setSearchFilter((prev) => ({ ...prev, location: "" }))
                       }
@@ -104,18 +103,18 @@ const JobListing = () => {
           )}
         <button
           onClick={() => setShowFilter((prev) => !prev)}
-          className="px-6 py-1.5 rounded border border-gray-400 lg:hidden"
+          className="px-6 py-1.5 rounded border border-gray-600 lg:hidden text-gray-300"
         >
           {showFilter ? "Close" : "Filters"}
         </button>
         {/* Category Section */}
         <div className={showFilter ? "" : "max-lg:hidden"}>
-          <h4 className="font-medium text-lg py-4">Search by Categories</h4>
-          <ul className="space-y-4 text-gray-600">
+          <h4 className="font-medium text-lg py-4 text-white">Search by Categories</h4>
+          <ul className="space-y-4 text-gray-400">
             {JobCategories.map((category, index) => (
               <li className="flex gap-3 items-center" key={index}>
                 <input
-                  className="scale-125"
+                  className="scale-125 accent-cyan-accent"
                   type="checkbox"
                   onChange={() => handleCategoryChange(category)}
                   checked={selectedCategories.includes(category)}
@@ -127,12 +126,12 @@ const JobListing = () => {
         </div>
         {/* Location Section */}
         <div className={showFilter ? "" : "max-lg:hidden"}>
-          <h4 className="font-medium text-lg py-4 pt-15">Search by Location</h4>
-          <ul className="space-y-4 text-gray-600">
+          <h4 className="font-medium text-lg py-4 pt-15 text-white">Search by Location</h4>
+          <ul className="space-y-4 text-gray-400">
             {JobLocations.map((location, index) => (
               <li className="flex gap-3 items-center" key={index}>
                 <input
-                  className="scale-125"
+                  className="scale-125 accent-cyan-accent"
                   type="checkbox"
                   onChange={() => handleLocationChange(location)}
                   checked={selectedLocations.includes(location)}
@@ -145,11 +144,11 @@ const JobListing = () => {
       </div>
 
       {/* Job Listing Section */}
-      <section className="w-full lg:w-3/4 text-gray-800 max-lg:px-4">
-        <h3 className="font-medium text-3xl py-2" ref={jobListRef}>
+      <section className="w-full lg:w-3/4 max-lg:px-4">
+        <h3 className="font-medium text-3xl py-2 text-white" ref={jobListRef}>
           Latest jobs
         </h3>
-        <p className="mb-8">
+        <p className="mb-8 text-gray-400">
           {filteredJobs.length !== 0
             ? "Get your desired job from top companies"
             : "No jobs found"}
@@ -179,12 +178,12 @@ const JobListing = () => {
                   : "cursor-pointer"
               }
             >
-              <img src={assets.left_arrow_icon} alt="Previous Page" />
+              <img className="invert" src={assets.left_arrow_icon} alt="Previous Page" />
             </button>
             {Array.from({ length: Math.ceil(filteredJobs.length / 6) }).map(
               (_, index) => (
                 <button
-                  className={`w-10 h-10 flex items-center justify-center border border-gray-300 rounded ${currentPage === index + 1 ? "bg-blue-100 text-blue-500" : "text-gray-500"}`}
+                  className={`w-10 h-10 flex items-center justify-center border border-gray-700 rounded ${currentPage === index + 1 ? "bg-cyan-accent/20 text-cyan-accent border-cyan-accent/50" : "text-gray-400"}`}
                   onClick={() => {
                     setCurrentPage(index + 1);
                     scrollToJobList();
@@ -210,7 +209,7 @@ const JobListing = () => {
                   : "cursor-pointer"
               }
             >
-              <img src={assets.right_arrow_icon} alt="Next Page" />
+              <img className="invert" src={assets.right_arrow_icon} alt="Next Page" />
             </button>
           </div>
         )}

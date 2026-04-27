@@ -10,7 +10,7 @@ const Navbar = () => {
   const navigate = useNavigate();
   const { setShowRecruiterLogin } = useContext(AppContext);
   return (
-    <div className="shadow py-3">
+    <div className="shadow shadow-gray-800/50 py-3 bg-navy">
       <div className="container px-4 2xl:px-20 mx-auto flex justify-between items-center">
         <img
           onClick={() => navigate("/")}
@@ -21,9 +21,9 @@ const Navbar = () => {
         {isLoaded ? (
           isSignedIn ? (
             <div className="flex items-center gap-3">
-              <Link to={"/applications"}>Applied Jobs</Link>
-              <p>|</p>
-              <p className="max-sm:hidden">
+              <Link className="text-gray-300 hover:text-cyan-accent" to={"/applications"}>Applied Jobs</Link>
+              <p className="text-gray-500">|</p>
+              <p className="max-sm:hidden text-gray-300">
                 {"Hi, " + " " + user.firstName + " " + user.lastName}
               </p>
               <UserButton />
@@ -32,13 +32,13 @@ const Navbar = () => {
             <div className="flex gap-4 max-sm:text-sm">
               <button
                 onClick={(e) => setShowRecruiterLogin(true)}
-                className="text-gray-600"
+                className="text-gray-400 hover:text-cyan-accent"
               >
                 Recruiter Login
               </button>
               <button
                 onClick={() => openSignIn()}
-                className="bg-blue-600 text-white px-6 sm:px-9 py-2 rounded-full"
+                className="bg-cyan-accent text-navy px-6 sm:px-9 py-2 rounded-full font-medium"
               >
                 Login
               </button>

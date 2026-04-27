@@ -91,33 +91,33 @@ const ApplyJob = () => {
       <Navbar />
 
       <div className="min-h-screen flex flex-col py-10 container px-4 2xl:px-20 mx-auto">
-        <div className="bg-white text-black rounded-lg w-full">
-          <div className="flex justify-center md:justify-between flex-wrap gap-8 px-14 py-20 mb-6 bg-sky-50 border border-sky-400 rounded-xl">
+        <div className="text-white rounded-lg w-full">
+          <div className="flex justify-center md:justify-between flex-wrap gap-8 px-14 py-20 mb-6 bg-navy-light border border-gray-700 rounded-xl">
             <div className="flex flex-col md:flex-row items-center">
               <img
-                className="h-24 bg-white rounded-lg p-4 mr-4 max-md:mb-4 border border-gray-200"
+                className="h-24 bg-navy rounded-lg p-4 mr-4 max-md:mb-4 border border-gray-700"
                 src={jobData.companyId.image}
                 alt=""
               />
-              <div className="text-center md:text-left text-neutral-700">
-                <h1 className="text-2xl sm:text-4xl font-medium">
+              <div className="text-center md:text-left">
+                <h1 className="text-2xl sm:text-4xl font-medium text-white">
                   {jobData.title}
                 </h1>
-                <div className="flex flex-row flex-wrap max-md:justify-center gap-y-2 gap-6 items-center text-gray-600 mt-2">
+                <div className="flex flex-row flex-wrap max-md:justify-center gap-y-2 gap-6 items-center text-gray-400 mt-2">
                   <span className="flex items-center gap-1">
-                    <img src={assets.suitcase_icon} alt="" />
+                    <img className="invert" src={assets.suitcase_icon} alt="" />
                     {jobData.companyId.name}
                   </span>
                   <span className="flex items-center gap-1">
-                    <img src={assets.location_icon} alt="" />
+                    <img className="invert" src={assets.location_icon} alt="" />
                     {jobData.location}
                   </span>
                   <span className="flex items-center gap-1">
-                    <img src={assets.person_icon} alt="" />
+                    <img className="invert" src={assets.person_icon} alt="" />
                     {jobData.level}
                   </span>
                   <span className="flex items-center gap-1">
-                    <img src={assets.money_icon} alt="" />
+                    <img className="invert" src={assets.money_icon} alt="" />
                     CTC: {kconvert.convertTo(jobData.salary)}
                   </span>
                 </div>
@@ -128,11 +128,11 @@ const ApplyJob = () => {
               <button
                 onClick={handleApplyForJob}
                 disabled={isAlreadyApplied}
-                className={`${isAlreadyApplied ? "bg-green-600" : "bg-blue-600"} p-2.5 px-10 text-white rounded`}
+                className={`${isAlreadyApplied ? "bg-green-500/20 text-green-400 cursor-not-allowed" : "bg-cyan-accent text-navy font-medium"} p-2.5 px-10 rounded`}
               >
                 {isAlreadyApplied ? "Applied" : "Apply Now"}
               </button>
-              <p className="mt-2 text-gray-600">
+              <p className="mt-2 text-gray-500">
                 Posted {moment(jobData.date).fromNow()}
               </p>
             </div>
@@ -140,7 +140,7 @@ const ApplyJob = () => {
           {/* job description and more jobs from the same company */}
           <div className="flex flex-col lg:flex-row justify-between items-start">
             <div className="w-full lg:w-2/3">
-              <h2 className="font-bold text-2xl mb-4">Job description</h2>
+              <h2 className="font-bold text-2xl mb-4 text-white">Job description</h2>
               <div
                 className="rich-text"
                 dangerouslySetInnerHTML={{ __html: jobData.description }}
@@ -148,14 +148,14 @@ const ApplyJob = () => {
               <button
                 onClick={handleApplyForJob}
                 disabled={isAlreadyApplied}
-                className={`${isAlreadyApplied ? "bg-green-600" : "bg-blue-600"} mt-6 p-2.5 px-10 text-white rounded`}
+                className={`${isAlreadyApplied ? "bg-green-500/20 text-green-400 cursor-not-allowed" : "bg-cyan-accent text-navy font-medium"} mt-6 p-2.5 px-10 rounded`}
               >
                 {isAlreadyApplied ? "Applied" : "Apply Now"}
               </button>
             </div>
             {/* more jobs from the same company*/}
             <div className="w-full lg:w-1/3 mt-8 lg:mt-0 lg:ml-8 space-y-5">
-              <h2>More jobs from {jobData.companyId.name}</h2>
+              <h2 className="text-white font-medium">More jobs from {jobData.companyId.name}</h2>
               {jobs
                 .filter(
                   (job) =>

@@ -33,7 +33,6 @@ const RecruiterLogin = () => {
           password,
         });
         if (data.success) {
-          // console.log(data);
           setCompanyData(data.data.company);
           setCompanyAccessToken(data.data.accessToken);
           axios.defaults.headers.common["Authorization"] =
@@ -78,7 +77,7 @@ const RecruiterLogin = () => {
   }, []);
   return (
     <div
-      className="absolute top-0 left-0 right-0 bottom-0 z-10 backdrop-blur-sm bg-black/30 flex justify-center items-center"
+      className="absolute top-0 left-0 right-0 bottom-0 z-10 backdrop-blur-sm bg-black/50 flex justify-center items-center"
       onClick={(e) => {
         if (e.target === e.currentTarget) setShowRecruiterLogin(false);
       }}
@@ -86,12 +85,12 @@ const RecruiterLogin = () => {
       <form
         onSubmit={handleFormSubmit}
         aria-label={`Recruiter ${state} form`}
-        className="relative bg-white p-10 rounded-xl text-slate-500 max-w-md w-full mx-4 animate-fade-in"
+        className="relative bg-navy-light p-10 rounded-xl text-gray-400 max-w-md w-full mx-4 animate-fade-in border border-gray-700"
       >
-        <h1 className="text-center text-2xl text-neutral-700 font-medium">
+        <h1 className="text-center text-2xl text-white font-medium">
           Recruiter {state}
         </h1>
-        <p className="text-sm text-center">
+        <p className="text-sm text-center text-gray-400">
           Welcome back! Please{" "}
           <span>{state === "Login" ? "login" : "sign up"}</span> to continue
         </p>
@@ -112,7 +111,7 @@ const RecruiterLogin = () => {
                   hidden
                 />
               </label>
-              <p>
+              <p className="text-gray-300">
                 Upload Company <br /> logo
               </p>
             </div>
@@ -120,11 +119,11 @@ const RecruiterLogin = () => {
         ) : (
           <>
             {state !== "Login" && (
-              <div className="border px-4 py-2 flex items-center gap-2 rounded-full mt-5">
-                <img src={assets.person_icon} alt="" />
+              <div className="border border-gray-700 px-4 py-2 flex items-center gap-2 rounded-full mt-5 bg-navy">
+                <img className="invert" src={assets.person_icon} alt="" />
                 <input
                   onChange={(e) => setName(e.target.value)}
-                  className="outline-none text-sm w-full"
+                  className="outline-none text-sm w-full bg-transparent text-white"
                   value={name}
                   type="text"
                   placeholder="Company Name"
@@ -132,22 +131,22 @@ const RecruiterLogin = () => {
                 />
               </div>
             )}
-            <div className="border px-4 py-2 flex items-center gap-2 rounded-full mt-5">
-              <img src={assets.email_icon} alt="" />
+            <div className="border border-gray-700 px-4 py-2 flex items-center gap-2 rounded-full mt-5 bg-navy">
+              <img className="invert" src={assets.email_icon} alt="" />
               <input
                 onChange={(e) => setEmail(e.target.value)}
-                className="outline-none text-sm w-full"
+                className="outline-none text-sm w-full bg-transparent text-white"
                 value={email}
                 type="email"
                 placeholder="Email"
                 required
               />
             </div>
-            <div className="border px-4 py-2 flex items-center gap-2 rounded-full mt-5">
-              <img src={assets.lock_icon} alt="" />
+            <div className="border border-gray-700 px-4 py-2 flex items-center gap-2 rounded-full mt-5 bg-navy">
+              <img className="invert" src={assets.lock_icon} alt="" />
               <input
                 onChange={(e) => setPassword(e.target.value)}
-                className="outline-none text-sm w-full"
+                className="outline-none text-sm w-full bg-transparent text-white"
                 value={password}
                 type="password"
                 placeholder="Password"
@@ -158,14 +157,14 @@ const RecruiterLogin = () => {
         )}
 
         {state === "Login" && (
-          <p className="text-sm text-blue-600 mt-4 cursor-pointer">
+          <p className="text-sm text-cyan-accent mt-4 cursor-pointer">
             Forgot password?
           </p>
         )}
 
         <button
           type="submit"
-          className="bg-blue-600 hover:bg-blue-700 active:bg-blue-800 transition-colors duration-200 mt-4 w-full text-white py-2 rounded-full cursor-pointer"
+          className="bg-cyan-accent hover:bg-cyan-accent/90 active:bg-cyan-accent/80 transition-colors duration-200 mt-4 w-full text-navy py-2 rounded-full cursor-pointer font-medium"
         >
           {state === "Login"
             ? "login"
@@ -174,33 +173,22 @@ const RecruiterLogin = () => {
               : "next"}
         </button>
         {state === "Login" && (
-          <p className="mt-5 text-center">
+          <p className="mt-5 text-center text-gray-400">
             Don't have an account?{" "}
             <span
-              className="text-blue-600 cursor-pointer"
-              onClick={() => {
-                setState("Sign Up");
-                setIsTextDataSubmited(false);
-                setName("");
-                setEmail("");
-                setPassword("");
-              }}
+              className="text-cyan-accent cursor-pointer"
+              onClick={() => setState("Sign Up")}
             >
               Sign up
             </span>
           </p>
         )}
         {state === "Sign Up" && (
-          <p className="mt-5 text-center">
+          <p className="mt-5 text-center text-gray-400">
             Already have an account?{" "}
             <span
-              className="text-blue-600 cursor-pointer"
-              onClick={() => {
-                setState("Login");
-                setName("");
-                setEmail("");
-                setPassword("");
-              }}
+              className="text-cyan-accent cursor-pointer"
+              onClick={() => setState("Login")}
             >
               Login
             </span>
@@ -212,7 +200,7 @@ const RecruiterLogin = () => {
           className="absolute top-5 right-5 cursor-pointer"
           aria-label="Close recruiter login"
         >
-          <img src={assets.cross_icon} alt="" />
+          <img className="invert" src={assets.cross_icon} alt="" />
         </button>
       </form>
     </div>
