@@ -63,6 +63,13 @@ export const AppContextProvider = (props) => {
         toast.error(data.message);
       }
     } catch (error) {
+      if (error.response?.status === 500 || error.response?.status === 401) {
+        // Token expired or invalid — clear it
+        setCompanyAccessToken(null);
+        setCompanyData(null);
+        localStorage.removeItem("companyAccessToken");
+        delete axios.defaults.headers.common["Authorization"];
+      }
       toast.error(error.response?.data?.message || "Something went wrong");
     }
   };

@@ -19,7 +19,7 @@ const JobCard = ({ job }) => {
         </span>
       </div>
       <p
-        className="text-gray-400 text-sm mt-4"
+        className="text-gray-400 text-sm mt-4 job-description-preview"
         dangerouslySetInnerHTML={{ __html: job.description.slice(0, 150) }}
       ></p>
       <div className="mt-4 flex gap-4 text-sm">

@@ -7,15 +7,26 @@ import { Job } from "../models/job.model.js";
 import mongoose from "mongoose";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { getAuth } from "@clerk/express";
+import { clerkClient } from "@clerk/express";
 
 // get user data
 const getUserData = asyncHandler(async (req, res) => {
   const { userId } = getAuth(req);
-  // console.log("Fetching data ", getAuth(req));
-  const user = await User.findById(userId).select("-__v");
+  let user = await User.findById(userId).select("-__v");
+
+  // If user not found, auto-create from Clerk data
+  // (handles webhook delay or misconfiguration)
   if (!user) {
-    throw new ApiError(404, "User not found");
+    const clerkUser = await clerkClient.users.getUser(userId);
+    user = await User.create({
+      _id: userId,
+      name: clerkUser.firstName + " " + clerkUser.lastName,
+      email: clerkUser.emailAddresses[0].emailAddress,
+      image: clerkUser.imageUrl,
+      resume: "",
+    });
   }
+
   return res
     .status(200)
     .json(new ApiResponse(200, user, "User data fetched successfully"));

@@ -43,10 +43,17 @@
 }
 
 /* ── Rich Text (Job Description) ── */
-.rich-text {
-  color: #c9d1d9;
+.rich-text,
+.rich-text * {
+  color: #c9d1d9 !important;
   line-height: 1.8;
   font-size: 0.95rem;
+}
+
+/* Override inline black color from Quill editor in job card previews */
+.job-description-preview,
+.job-description-preview * {
+  color: #9ca3af !important;
 }
 
 .rich-text p {
