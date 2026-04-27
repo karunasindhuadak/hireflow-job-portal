@@ -103,9 +103,9 @@ const getUserJobApplications = asyncHandler(async (req, res) => {
       },
     },
   ]);
-  if (!applications || applications.length === 0) {
-    throw new ApiError(404, "No job applications found");
-  }
+  // if (!applications || applications.length === 0) {
+  //   throw new ApiError(404, "No job applications found");
+  // }
   return res
     .status(200)
     .json(
