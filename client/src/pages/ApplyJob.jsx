@@ -41,14 +41,16 @@ const ApplyJob = () => {
     try {
       if (!userData) {
         toast.error("Please login to apply for this job");
+        return;
       }
       if (!userData.resume) {
         navigate("/applications");
         toast.error("Upload your resume to proceed");
+        return;
       }
       const token = await getToken();
       const { data } = await axios.post(
-        "api/users/apply",
+        "/api/users/apply",
         { jobId: id },
         {
           headers: {
@@ -125,6 +127,7 @@ const ApplyJob = () => {
             <div className="flex flex-col justify-center text-end text-sm max-md:mx-auto max-md:text-center">
               <button
                 onClick={handleApplyForJob}
+                disabled={isAlreadyApplied}
                 className={`${isAlreadyApplied ? "bg-green-600" : "bg-blue-600"} p-2.5 px-10 text-white rounded`}
               >
                 {isAlreadyApplied ? "Applied" : "Apply Now"}
@@ -144,6 +147,7 @@ const ApplyJob = () => {
               ></div>
               <button
                 onClick={handleApplyForJob}
+                disabled={isAlreadyApplied}
                 className={`${isAlreadyApplied ? "bg-green-600" : "bg-blue-600"} mt-6 p-2.5 px-10 text-white rounded`}
               >
                 {isAlreadyApplied ? "Applied" : "Apply Now"}

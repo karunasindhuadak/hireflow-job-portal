@@ -117,7 +117,7 @@ const AddJob = () => {
       <div>
         <p className="mb-2">Salary</p>
         <input
-          onChange={(e) => setSalary(e.target.value)}
+          onChange={(e) => setSalary(Number(e.target.value))}
           type="number"
           min={0}
           placeholder="Enter salary"

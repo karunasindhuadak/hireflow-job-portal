@@ -178,7 +178,13 @@ const RecruiterLogin = () => {
             Don't have an account?{" "}
             <span
               className="text-blue-600 cursor-pointer"
-              onClick={() => setState("Sign Up")}
+              onClick={() => {
+                setState("Sign Up");
+                setIsTextDataSubmited(false);
+                setName("");
+                setEmail("");
+                setPassword("");
+              }}
             >
               Sign up
             </span>
@@ -189,7 +195,12 @@ const RecruiterLogin = () => {
             Already have an account?{" "}
             <span
               className="text-blue-600 cursor-pointer"
-              onClick={() => setState("Login")}
+              onClick={() => {
+                setState("Login");
+                setName("");
+                setEmail("");
+                setPassword("");
+              }}
             >
               Login
             </span>

@@ -5,19 +5,18 @@ import moment from "moment";
 import Footer from "../components/Footer";
 import { useContext } from "react";
 import { AppContext } from "../context/AppContext";
-import { useAuth, useUser } from "@clerk/react";
+import { useAuth } from "@clerk/react";
 import axios from "axios";
 import { toast } from "react-toastify";
-import { useEffect } from "react";
+
+import Loading from "../components/Loading";
 
 const Applications = () => {
-  const { user } = useUser();
   // console.log("User in applications page: ", user);
   const { getToken } = useAuth();
   const [isEdit, setIsEdit] = useState(false);
   const [resume, setResume] = useState(null);
-  const { fetchUserData, userData, userApplications, fetchUserApplications } =
-    useContext(AppContext);
+  const { fetchUserData, userData, userApplications } = useContext(AppContext);
   const [loading, setLoading] = useState(false);
   // const [jobsApplied, setJobsApplied] = useState([])
 
@@ -47,11 +46,6 @@ const Applications = () => {
     setLoading(false);
   };
 
-  useEffect(() => {
-    if (user) {
-      fetchUserApplications();
-    }
-  }, [user]);
   return (
     <>
       <Navbar />
@@ -102,37 +96,37 @@ const Applications = () => {
           )}
         </div>
         <h2 className="text-xl font-semibold mb-4">Jobs Applied</h2>
-        {userApplications && userApplications.length === 0 ? (
-          <div className="flex items-center justify-center h-[50vh]">
-            <p className="text-xl sm: text-2xl">
-              You have not applied to any jobs yet.
-            </p>
-          </div>
-        ) : (
-          <div className="overflow-x-auto border border-gray-300 rounded-lg">
-            <table className="min-w-full bg-white overflow-hidden">
-              <thead className="bg-gray-100">
-                <tr>
-                  <th className="py-3 px-4 border-b border-gray-300 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">
-                    Company
-                  </th>
-                  <th className="py-3 px-4 border-b border-gray-300 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">
-                    Job Title
-                  </th>
-                  <th className="py-3 px-4 border-b border-gray-300 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider max-sm:hidden">
-                    Location
-                  </th>
-                  <th className="py-3 px-4 border-b border-gray-300 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider max-sm:hidden">
-                    Date
-                  </th>
-                  <th className="py-3 px-4 border-b border-gray-300 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">
-                    Action
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                {userApplications.map((job, index) =>
-                  true ? (
+        {userApplications ? (
+          userApplications.length === 0 ? (
+            <div className="flex items-center justify-center h-[50vh]">
+              <p className="text-xl sm: text-2xl">
+                You have not applied to any jobs yet.
+              </p>
+            </div>
+          ) : (
+            <div className="overflow-x-auto border border-gray-300 rounded-lg">
+              <table className="min-w-full bg-white overflow-hidden">
+                <thead className="bg-gray-100">
+                  <tr>
+                    <th className="py-3 px-4 border-b border-gray-300 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                      Company
+                    </th>
+                    <th className="py-3 px-4 border-b border-gray-300 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                      Job Title
+                    </th>
+                    <th className="py-3 px-4 border-b border-gray-300 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider max-sm:hidden">
+                      Location
+                    </th>
+                    <th className="py-3 px-4 border-b border-gray-300 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider max-sm:hidden">
+                      Date
+                    </th>
+                    <th className="py-3 px-4 border-b border-gray-300 text-left text-sm font-semibold text-gray-700 uppercase tracking-wider">
+                      Action
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {userApplications.map((job, index) => (
                     <tr
                       key={index}
                       className="hover:bg-gray-50 even:bg-gray-50/50 transition-colors"
@@ -164,10 +158,14 @@ const Applications = () => {
                         </span>
                       </td>
                     </tr>
-                  ) : null,
-                )}
-              </tbody>
-            </table>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )
+        ) : (
+          <div className="flex items-center justify-center h-[50vh]">
+            <Loading />
           </div>
         )}
       </div>
