@@ -17,11 +17,10 @@ const Hero = () => {
     <div className="container 2xl:px-20 mx-auto py-10">
       <div className="bg-gradient-to-r from-cyan-accent/20 to-navy-light text-white text-center py-16 mx-2 rounded-xl border border-gray-700/50">
         <h2 className="text-2xl md:text-3xl lg:text-4xl font-medium mb-4">
-          Over 10,000+ jobs to apply
+          Find the Right Job for You
         </h2>
         <p className="mb-8 max-w-xl mx-auto text-sm font-light px-5 text-gray-400">
-          Your Next Big Career Move Starts Right Here - Explore the Best Job
-          Opportunities and Take the First Step Toward Your Future!
+          Explore verified opportunities and take the next step in your career.
         </p>
         <div className="flex items-center justify-between rounded bg-navy-light max-w-xl text-gray-400 pl-4 mx-4 sm:mx-auto border border-gray-700">
           <div className="flex items-center">
@@ -54,10 +53,26 @@ const Hero = () => {
       <div className="border border-gray-700 shadow-md mx-2 mt-5 p-6 rounded-md flex bg-navy-light">
         <div className="flex justify-center gap-10 lg:gap-16 flex-wrap">
           <p className="font-medium text-gray-300">Trusted by</p>
-          <img className="h-6 brightness-200" src={assets.microsoft_logo} alt="" />
-          <img className="h-6 brightness-200" src={assets.walmart_logo} alt="" />
-          <img className="h-6 brightness-200" src={assets.samsung_logo} alt="" />
-          <img className="h-6 brightness-200" src={assets.accenture_logo} alt="" />
+          <img
+            className="h-6 brightness-200"
+            src={assets.microsoft_logo}
+            alt=""
+          />
+          <img
+            className="h-6 brightness-200"
+            src={assets.walmart_logo}
+            alt=""
+          />
+          <img
+            className="h-6 brightness-200"
+            src={assets.samsung_logo}
+            alt=""
+          />
+          <img
+            className="h-6 brightness-200"
+            src={assets.accenture_logo}
+            alt=""
+          />
           <img className="h-6 brightness-200" src={assets.amazon_logo} alt="" />
           <img className="h-6 brightness-200" src={assets.adobe_logo} alt="" />
         </div>
