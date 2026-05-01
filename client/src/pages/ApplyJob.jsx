@@ -14,7 +14,7 @@ import { useAuth } from "@clerk/react";
 const ApplyJob = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [jobData, setJobData] = useState(null);
+  const [jobData, setJobData] = useState(false);
   const { jobs, axios, userData, fetchUserApplications, userApplications } =
     useContext(AppContext);
   const { getToken } = useAuth();
@@ -140,7 +140,9 @@ const ApplyJob = () => {
           {/* job description and more jobs from the same company */}
           <div className="flex flex-col lg:flex-row justify-between items-start">
             <div className="w-full lg:w-2/3">
-              <h2 className="font-bold text-2xl mb-4 text-white">Job description</h2>
+              <h2 className="font-bold text-2xl mb-4 text-white">
+                Job description
+              </h2>
               <div
                 className="rich-text"
                 dangerouslySetInnerHTML={{ __html: jobData.description }}
@@ -155,7 +157,9 @@ const ApplyJob = () => {
             </div>
             {/* more jobs from the same company*/}
             <div className="w-full lg:w-1/3 mt-8 lg:mt-0 lg:ml-8 space-y-5">
-              <h2 className="text-white font-medium">More jobs from {jobData.companyId.name}</h2>
+              <h2 className="text-white font-medium">
+                More jobs from {jobData.companyId.name}
+              </h2>
               {jobs
                 .filter(
                   (job) =>
