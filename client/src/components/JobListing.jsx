@@ -2,9 +2,11 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { AppContext } from "../context/AppContext";
 import { assets, JobCategories, JobLocations } from "../assets/assets";
 import JobCard from "./JobCard";
+import { Tailspin } from "ldrs/react";
+import "ldrs/react/Tailspin.css";
 
 const JobListing = () => {
-  const { isSearched, searchFilter, setSearchFilter, jobs } =
+  const { isSearched, searchFilter, setSearchFilter, jobs, jobsLoading } =
     useContext(AppContext);
   const [showFilter, setShowFilter] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -153,13 +155,19 @@ const JobListing = () => {
             ? "Get your desired job from top companies"
             : "No jobs found"}
         </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
-          {filteredJobs
-            .slice((currentPage - 1) * 6, currentPage * 6)
-            .map((job, index) => (
-              <JobCard key={index} job={job} />
-            ))}
-        </div>
+        {jobsLoading ? (
+          <div className="flex items-center justify-center min-h-[40vh]">
+            <Tailspin size="50" stroke="5" speed="0.9" color="#00E5FF" />
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
+            {filteredJobs
+              .slice((currentPage - 1) * 6, currentPage * 6)
+              .map((job, index) => (
+                <JobCard key={index} job={job} />
+              ))}
+          </div>
+        )}
 
         {/* Pagination */}
         {filteredJobs.length > 6 && (
