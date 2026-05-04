@@ -140,4 +140,4 @@ vite.config.ts.timestamp-*
 server/seed-jobs.js
 
 # Screenshots
-/screenshots/*
+screenshots/
